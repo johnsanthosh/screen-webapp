@@ -4,11 +4,13 @@
       <div class="panel-heading">{{screen.content}}</div>
       <div class="panel-body">
         <p>{{screen.content}}</p>
-        <form (ngSubmit)="onSubmit()" #f="ngForm">
-          <input type="text" id="id" name="id" ngModel style="display:none">
-          <input type="text" id="content" name="content" ngModel>
-          <button class="btn btn-primary" type="submit">Ok</button>
-        </form>
+        <div *ngIf="singleScreen">
+          <form (ngSubmit)="onSubmit()" #f="ngForm">
+            <input type="text" id="id" name="id" ngModel style="display:none">
+            <input type="text" id="content" name="content" ngModel>
+            <button class="btn btn-primary" type="submit">Ok</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>

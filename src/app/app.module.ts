@@ -7,10 +7,8 @@ import {HttpClientModule} from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
 import {ScreenService} from './screen.service';
 import {HeaderComponent} from './header/header.component';
-import {ScreenComponent} from './screen/screen.component';
 import {RouterModule, Routes} from '@angular/router';
-import { PageComponent } from './page/page.component';
-import {MessageService} from './message.service';
+import {PageComponent} from './page/page.component';
 
 const routes: Routes = [
   {
@@ -27,7 +25,6 @@ const routes: Routes = [
   declarations: [
     AppComponent,
     HeaderComponent,
-    ScreenComponent,
     PageComponent
   ],
   imports: [
@@ -36,7 +33,7 @@ const routes: Routes = [
     FormsModule,
     RouterModule.forRoot(routes, {})
   ],
-  providers: [ScreenService, MessageService],
+  providers: [ScreenService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

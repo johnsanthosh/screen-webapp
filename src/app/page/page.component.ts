@@ -1,9 +1,8 @@
-import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {ScreenService} from '../screen.service';
 import {ActivatedRoute} from '@angular/router';
 import {NgForm} from '@angular/forms';
-import {Subscription} from 'rxjs/Subscription';
-import {MessageService} from '../message.service';
+import {Observable} from 'rxjs/Rx';
 
 @Component({
   selector: 'app-page',
@@ -15,18 +14,10 @@ export class PageComponent implements OnInit {
   @Input() screens: { id: string, content: string };
   submittedScreen: { id: string, content: string };
   @Input() id: number;
-  message: any;
-  subscription: Subscription;
+  singleScreen: boolean;
 
-  item: { id: string, content: string };
+  constructor(private screenService: ScreenService, private route: ActivatedRoute) {
 
-  constructor(private screenService: ScreenService, private messageService: MessageService, private route: ActivatedRoute) {
-    // subscribe to home component messages
-    this.subscription = this.messageService.getMessage().subscribe(message => {
-      this.message = message.text;
-      console.log(this.message);
-      this.refreshScreens(this.message);
-    });
   }
 
 
@@ -34,42 +25,39 @@ export class PageComponent implements OnInit {
     this.submittedScreen = {id: '', content: ''};
     this.id = this.route.snapshot.params['id'];
     if (this.id === undefined) {
-      console.log('ID : ' + undefined);
       this.screenService.getScreens().subscribe((response => {
         this.screens = response;
-        console.log(this.screens);
       }));
+      this.singleScreen = false;
     } else {
-      console.log('ID : ' + this.id);
       this.screenService.getScreen(this.id).subscribe((response => {
         this.screens = response;
-        console.log(this.screens);
       }));
+      this.singleScreen = true;
     }
+
+    Observable.interval(5000).subscribe(x => {
+      if (this.id !== undefined) {
+        this.refreshScreens(this.id.toString());
+      }
+    });
 
   }
 
   onSubmit() {
-    console.log(this.submittedForm);
     this.submittedScreen.id = this.id.toString();
     this.submittedScreen.content = this.submittedForm.value.content;
     console.log(this.submittedScreen);
     this.screenService.updateScreen(this.submittedScreen).subscribe((response => {
-      console.log(response);
-      this.sendMessage(this.submittedScreen.id);
+      this.refreshScreens(this.submittedScreen.id);
     }));
   }
+
 
   refreshScreens(id: string) {
-    console.log('Refresh');
     this.screenService.getScreen(Number(id)).subscribe((response => {
       this.screens = response;
-      console.log(this.screens);
     }));
-  }
-
-  sendMessage(id: string): void {
-    this.messageService.sendMessage(id);
   }
 
 
